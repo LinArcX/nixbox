@@ -119,7 +119,7 @@ DeleteGenerations(){
 
     userChoice=$(select_opt\
         "0. Delete User Profile Generations"\
-        "1. Delete Root Profile Generations"\
+        "1. Delete Default(Root) Profile Generations"\
         "2. Delete System Profile Generations"\
         "3. Delete All Generations"\
         "4. Back")
@@ -184,8 +184,132 @@ Generations(){
         0) ListGenerations; Generations ;;
         1) DeleteGenerations; Generations;;
         2) show_menus ;;
+        *) echo -e "${red}Error...${end}"; pressAnyKey; Generations;;
+    esac
+}
+
+#-------- =[ Derivations ]= --------#
+ListAllDerivations(){
+    nix-env -q
+}
+
+InstallDerivation(){
+    read -p "${blue}Enter derivation name: ${end}" drvName
+    nix-env -f '<nixpkgs>' -iA $drvName
+}
+
+DeleteSingleDerivation() {
+    read -p "${blue}Enter package name: ${end}" drvName
+
+    read -p "${red}Are you sure? ${end}" choice
+    case $choice in
+        'y'|'Y'|"Yes"|"yes") nix-env -e $drvName;;
+        'n'|'N'|"No"|"no") Derivations ;;
+        *) echo -e "${RED}Error...${STD}" && sleep 2
+    esac
+}
+
+DeleteAllDerivations(){
+    read -p "${red}Are you sure? ${end}" choice
+    case $choice in
+        'y'|'Y'|"Yes"|"yes") nix-env -e '.*' ;;
+        'n'|'N'|"No"|"no") Derivations ;;
+        *) echo -e "${RED}Error...${STD}" && sleep 2
+    esac
+}
+
+UpdateCache(){
+    nix search -u
+}
+
+SearchDerivation(){
+    read -p "${blue}Enter derivation name: ${end}" drvName
+    nix search $drvName
+}
+
+FindDependencies() {
+    read -p "${blue}Enter derivation name: ${end}" drvName
+    fullAddress=$(nix eval --raw nixpkgs.$drvName)
+    echo $fullAddress
+    nix-store --query --references $fullAddress
+}
+
+#-------- =[ Derivations ]= --------#
+Derivations(){
+    clear
+    echo "~~~~~~~~~~~~~~~~~~~~~"
+    echo " D E R I V A T I O N S"
+    echo "~~~~~~~~~~~~~~~~~~~~~"
+
+    userChoice=$(select_opt\
+        "0. List all derivations"\
+        "1. Install a derivaiton"\
+        "2. Delete signle derivation"\
+        "3. Delete all derivations from user profile" \
+        "4. Update the cache" \
+        "5. Search for a derivaiton in nixpkgs" \
+        "6. Find all dependecies of a installed derivation"\
+        "7. Back")
+
+    case "$userChoice" in
+        0) ListAllDerivations; pressAnyKey; Derivations ;;
+        1) InstallDerivation; pressAnyKey; Derivations ;;
+        2) DeleteSingleDerivation; pressAnyKey; Derivations ;;
+        3) DeleteAllDerivations; pressAnyKey; Derivations ;;
+        4) UpdateCache; pressAnyKey; Derivations ;;
+        5) SearchDerivation; pressAnyKey; Derivations ;;
+        6) FindDependencies; pressAnyKey; Derivations ;;
+        7) show_menus ;;
+        *) echo -e "${red}Error...${end}"; pressAnyKey; Derivations;;
+    esac
+}
+
+ListUserChannels(){
+    nix-channel --list
+}
+
+ListRootChannels(){
+    sudo nix-channel --list
+}
+
+UpdateChannels(){
+    nix-channel --update
+}
+
+AddChannel(){
+    read -p "${blue}Enter Channel name: (For example: unstable, 18.09, ...) ${end}" channelName
+    nix-channel --add https://nixos.org/channels/nixpkgs-$channelName
+}
+
+RemoveChannel(){
+    read -p "${blue}Enter Channel name: (For example: unstable, 18.09, ...) ${end}" channelName
+    nix-channel --remove nixpkgs-$channelName
+}
+
+#-------- =[ Channels ]= --------#
+Channels(){
+    clear
+    echo "~~~~~~~~~~~~~~~~~~~~~"
+    echo " C H A N N E L S"
+    echo "~~~~~~~~~~~~~~~~~~~~~"
+
+    userChoice=$(select_opt\
+        "0. List all user channels"\
+        "1. List all root channels"\
+        "2. Update channels"\
+        "3. Add a channel"\
+        "4. Remove a channel"\
+        "5. Back")
+
+    case "$userChoice" in
+        0) ListUserChannels; pressAnyKey; Channels ;;
+        1) ListRootChannels; pressAnyKey; Channels ;;
+        2) UpdateChannels; pressAnyKey; Channels ;;
+        3) AddChannel; pressAnyKey; Channels ;;
+        4) RemoveChannel; pressAnyKey; Channels ;;
+        5) show_menus ;;
         *) echo -e "${red}Error...${end}" && sleep 2
-            Generations;;
+            Channels;;
     esac
 }
 
@@ -201,13 +325,13 @@ GCSystem(){
 GC(){
     clear
     echo "~~~~~~~~~~~~~~~~~~~~~"
-    echo " R U N - G C"
+    echo " G C "
     echo "~~~~~~~~~~~~~~~~~~~~~"
 
     userChoice=$(select_opt\
-        "0. Run GC (user profile)"\
-        "1. Run GC (system profile)"\
-        "2. Run GC (both)"\
+        "0. GC (user profile)"\
+        "1. GC (system profile)"\
+        "2. GC (both)"\
         "3. Back")
 
     case "$userChoice" in
@@ -286,8 +410,7 @@ Locate(){
         1) locateFiles ; pressAnyKey; Locate ;;
         2) locateLibraries; pressAnyKey; Locate;;
         3) show_menus ;;
-        *) echo -e "${red}Error...${end}" && sleep 2
-            Locate;;
+        *) echo -e "${red}Error...${end}"; pressAnyKey; Locate;;
     esac
 }
 
@@ -317,20 +440,26 @@ show_menus() {
     echo "~~~~~~~~~~~~~~~~~~~~~"
     echo " M A I N - M E N U"
     echo "~~~~~~~~~~~~~~~~~~~~~"
+
     userChoice=$(select_opt\
         "0. Generations"\
-        "1. GC"\
-        "2. Fix"\
+        "1. Derivations"\
+        "2. Channels"\
         "3. Locate"\
-        "4. Utilities"\
-        "5. Exit")
+        "4. GC"\
+        "5. Fix"\
+        "6. Utilities"\
+        "7. Exit")
+
     case "$userChoice" in
         0) Generations ;;
-        1) GC ;;
-        2) Fix ;;
+        1) Derivations ;;
+        2) Channels ;;
         3) Locate ;;
-        4) Utilities ;;
-        5) exit 0;;
+        4) GC ;;
+        5) Fix ;;
+        6) Utilities ;;
+        7) exit 0;;
         *) echo -e "${red}Error...${end}" && sleep 2
     esac
 }
