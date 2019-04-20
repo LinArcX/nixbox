@@ -87,43 +87,9 @@ function select_opt {
     return $result
 }
 
+#-------- =[ Util Functions ]= --------#
 pause(){
     read -p "Press [Enter] key to continue..." fackEnterKey
-}
-
-deleteUserProfileGeneration(){
-    sh -c "nix-env --delete-generations +5"
-    echo -e "${blue}Finishing...(Delete UserProfile Generation)${end}" && sleep 1
-}
-
-deleteRootProfileGeneration(){
-    sh -c "sudo nix-env --delete-generations +5"
-    echo -e "${blue}Finishing...(Delete RootProfile Generation)${end}"
-}
-
-deleteSystemProfileGeneration(){
-    sh -c "sudo nix-env --delete-generations --profile /nix/var/nix/profiles/system +5"
-    echo -e "${blue}Finishing...(Delete SystemProfile Generation)${end}"
-}
-
-RunGCProfile(){
-    sh -c "nix-collect-garbage"
-    echo -e "${blue}Finishing...(Run GC Profile)${end}" && sleep 1
-}
-
-RunGCSystem(){
-    sh -c "sudo nix-collect-garbage"
-    echo -e "${blue}Finishing...(Run GC System) ${end}" && sleep 1
-}
-
-RebuildFix(){
-    sudo nixos-rebuild switch --repair
-    echo -e "${blue}Finishing...(Rebuild-Fix) ${end}" && sleep 1
-}
-
-AdvanceFix(){
-    sudo nix-store --verify --check-contents --repair
-    echo -e "${blue}Finishing...(Advance Fix) ${end}" && sleep 1
 }
 
 pressAnyKey(){
@@ -131,42 +97,18 @@ pressAnyKey(){
     read -p "Press any key to continue " -n 1 -r
 }
 
-RunGC(){
-    clear
-    echo "~~~~~~~~~~~~~~~~~~~~~"
-    echo " R U N - G C"
-    echo "~~~~~~~~~~~~~~~~~~~~~"
-    userChoice=$(select_opt\
-        "0. Run GC (user profile)"\
-        "1. Run GC (system profile)"\
-        "2. Run GC (both)"\
-        "3. Back")
-            case "$userChoice" in
-                0) RunGCProfile; pressAnyKey; RunGC ;;
-                1) RunGCSystem; pressAnyKey; RunGC ;;
-                2) RunGCProfile; RunGCSystem; pressAnyKey; RunGC ;;
-                3) show_menus ;;
-                *) echo -e "${red}Error...${end}" && sleep 2
-                    RunGC;;
-            esac
+#-------- =[ Generations ]= --------#
+deleteUserProfileGeneration(){
+    sh -c "nix-env --delete-generations +5"
+   # echo -e "${blue}Finishing...(Delete UserProfile Generation)${end}" && sleep 1
 }
 
-Fix(){
-    clear
-    echo "~~~~~~~~~~~~~~~~~~~~~"
-    echo " F I X"
-    echo "~~~~~~~~~~~~~~~~~~~~~"
-    userChoice=$(select_opt\
-        "0. Rebuild-Fix" \
-        "1. Scan the entire Nix store and fix corrupted paths"\
-        "2. Back")
-            case "$userChoice" in
-                0) RebuildFix; pressAnyKey; Fix ;;
-                1) AdvanceFix; pressAnyKey; Fix ;;
-                2) show_menus ;;
-                *) echo -e "${red}Error...${end}" && sleep 2
-                    Fix;;
-            esac
+deleteRootProfileGeneration(){
+    sh -c "sudo nix-env --delete-generations +5"
+}
+
+deleteSystemProfileGeneration(){
+    sh -c "sudo nix-env --delete-generations --profile /nix/var/nix/profiles/system +5"
 }
 
 DeleteGenerations(){
@@ -174,67 +116,246 @@ DeleteGenerations(){
     echo "~~~~~~~~~~~~~~~~~~~~~"
     echo " D E L E T E - G E N E R A T I O N S"
     echo "~~~~~~~~~~~~~~~~~~~~~"
+
     userChoice=$(select_opt\
         "0. Delete User Profile Generations"\
         "1. Delete Root Profile Generations"\
         "2. Delete System Profile Generations"\
         "3. Delete All Generations"\
         "4. Back")
+
     case "$userChoice" in
         0) deleteUserProfileGeneration; pressAnyKey; DeleteGenerations ;;
         1) deleteRootProfileGeneration; pressAnyKey; DeleteGenerations;;
         2) deleteSystemProfileGeneration; pressAnyKey; DeleteGenerations;;
         3) deleteUserProfileGeneration; deleteRootProfileGeneration; deleteSystemProfileGeneration; pressAnyKey; DeleteGenerations;;
-        4) show_menus ;;
+        4) Generations ;;
         *) echo -e "${red}Error...${end}" && sleep 2
             DeleteGenerations;;
     esac
 }
 
+listUserProfileGeneration(){
+    nix-env --list-generations --profile /nix/var/nix/profiles/per-user/$USER/profile
+}
+
+listDefaultProfileGeneration(){
+    sudo nix-env --list-generations --profile /nix/var/nix/profiles/default
+}
+
+listSystemProfileGeneration(){
+    sudo nix-env --list-generations --profile /nix/var/nix/profiles/system
+}
+
+ListGenerations(){
+    clear
+    echo "~~~~~~~~~~~~~~~~~~~~~"
+    echo " L I S T - G E N E R A T I O N S"
+    echo "~~~~~~~~~~~~~~~~~~~~~"
+
+    userChoice=$(select_opt\
+        "0. List User Profile Generations"\
+        "1. List Default(Root) Profile Generations"\
+        "2. List System Profile Generations"\
+        "3. Back")
+
+    case "$userChoice" in
+        0) listUserProfileGeneration; pressAnyKey; ListGenerations ;;
+        1) listDefaultProfileGeneration; pressAnyKey; ListGenerations;;
+        2) listSystemProfileGeneration; pressAnyKey; ListGenerations;;
+        3) Generations ;;
+        *) echo -e "${red}Error...${end}" && sleep 2
+            ListGenerations;;
+    esac
+}
+
+Generations(){
+    clear
+    echo "~~~~~~~~~~~~~~~~~~~~~"
+    echo " G E N E R A T I O N S"
+    echo "~~~~~~~~~~~~~~~~~~~~~"
+
+    userChoice=$(select_opt\
+        "0. List"\
+        "1. Delete"\
+        "2. Back")
+
+    case "$userChoice" in
+        0) ListGenerations; Generations ;;
+        1) DeleteGenerations; Generations;;
+        2) show_menus ;;
+        *) echo -e "${red}Error...${end}" && sleep 2
+            Generations;;
+    esac
+}
+
+#-------- =[ GC ]= --------#
+GCProfile(){
+    sh -c "nix-collect-garbage"
+}
+
+GCSystem(){
+    sh -c "sudo nix-collect-garbage"
+}
+
+GC(){
+    clear
+    echo "~~~~~~~~~~~~~~~~~~~~~"
+    echo " R U N - G C"
+    echo "~~~~~~~~~~~~~~~~~~~~~"
+
+    userChoice=$(select_opt\
+        "0. Run GC (user profile)"\
+        "1. Run GC (system profile)"\
+        "2. Run GC (both)"\
+        "3. Back")
+
+    case "$userChoice" in
+        0) GCProfile; pressAnyKey; GC ;;
+        1) GCSystem; pressAnyKey; GC ;;
+        2) GCProfile; GCSystem; pressAnyKey; GC ;;
+        3) show_menus ;;
+        *) echo -e "${red}Error...${end}" && sleep 2
+            GC;;
+    esac
+}
+
+#-------- =[ Fix ]= --------#
+RebuildFix(){
+    sudo nixos-rebuild switch --repair
+}
+
+AdvanceFix(){
+    sudo nix-store --verify --check-contents --repair
+}
+
+Fix(){
+    clear
+    echo "~~~~~~~~~~~~~~~~~~~~~"
+    echo " F I X"
+    echo "~~~~~~~~~~~~~~~~~~~~~"
+
+    userChoice=$(select_opt\
+        "0. Rebuild-Fix" \
+        "1. Scan the entire Nix store and fix corrupted paths"\
+        "2. Back")
+
+    case "$userChoice" in
+        0) RebuildFix; pressAnyKey; Fix ;;
+        1) AdvanceFix; pressAnyKey; Fix ;;
+        2) show_menus ;;
+        *) echo -e "${red}Error...${end}" && sleep 2
+            Fix;;
+    esac
+}
+
+#-------- =[ Locate ]= --------#
+indexFiles(){
+    read -p "${red}This may take some times. Are you sure to continue? ${end}" choice
+    case $choice in
+        'y'|'Y'|"Yes"|"yes") nix-index;;
+        'n'|'N'|"No"|"no") Locate ;;
+        *) echo -e "${RED}Error...${STD}" && sleep 2
+    esac
+}
+
+locateFiles(){
+    read -p "Enter file name(like: 'bin/firefox') " fileName
+    sh -c "nix-locate $fileName"
+}
+
+locateLibraries(){
+    read -p "Enter .so name(like: libexpat.so.1 ) " libName
+    nix-locate $libName --top-level --minimal
+}
+
+Locate(){
+    clear
+    echo "~~~~~~~~~~~~~~~~~~~~~"
+    echo " L O C A T E"
+    echo "~~~~~~~~~~~~~~~~~~~~~"
+
+    userChoice=$(select_opt\
+        "0. nix-index" \
+        "1. locate files"\
+        "2. locate .so files for corresponding packages"\
+        "3. Back")
+
+    case "$userChoice" in
+        0) indexFiles  ; pressAnyKey; Locate ;;
+        1) locateFiles ; pressAnyKey; Locate ;;
+        2) locateLibraries; pressAnyKey; Locate;;
+        3) show_menus ;;
+        *) echo -e "${red}Error...${end}" && sleep 2
+            Locate;;
+    esac
+}
+
+Utilities(){
+    clear
+    echo "~~~~~~~~~~~~~~~~~~~~~"
+    echo " U T I L I T I E S"
+    echo "~~~~~~~~~~~~~~~~~~~~~"
+
+    userChoice=$(select_opt\
+        "0. update font cache" \
+        "1. REPL"\
+        "2. Back")
+
+    case "$userChoice" in
+        0) fc-cache -f ; pressAnyKey; Utilities ;;
+        1) nix repl '<nixpkgs/nixos>' ; pressAnyKey; Utilities ;;
+        2) show_menus ;;
+        *) echo -e "${red}Error...${end}" && sleep 2
+            Utilities;;
+    esac
+}
+
+#-------- =[ Show Main Menu ]= --------#
 show_menus() {
     clear
     echo "~~~~~~~~~~~~~~~~~~~~~"
     echo " M A I N - M E N U"
     echo "~~~~~~~~~~~~~~~~~~~~~"
-    userChoice=$(select_opt "0. Delete Generations" "1. Run GC" "2. Fix" "3. Locate" "4. Exit")
+    userChoice=$(select_opt\
+        "0. Generations"\
+        "1. GC"\
+        "2. Fix"\
+        "3. Locate"\
+        "4. Utilities"\
+        "5. Exit")
     case "$userChoice" in
-        0) DeleteGenerations ;;
-        1) RunGC ;;
+        0) Generations ;;
+        1) GC ;;
         2) Fix ;;
         3) Locate ;;
-        4) exit 0;;
+        4) Utilities ;;
+        5) exit 0;;
         *) echo -e "${red}Error...${end}" && sleep 2
     esac
 }
 
-# ----------------------------------------------
-# Trap CTRL+C, CTRL+Z and quit singles
-# ----------------------------------------------
-#trap '' SIGINT SIGQUIT SIGTSTP
-
-# -----------------------------------
-# Main logic - infinite loop
-# ------------------------------------
+#-------- =[ Main logic - infinite loop ]= --------#
 while true
 do
     show_menus
 done
 
-# read input from the keyboard and take a action
-# invoke the one() when the user select 1 from the menu option.
-# invoke the two() when the user select 2 from the menu option.
-# Exit when user the user select 3 form the menu option.
+#-------- =[ Trap CTRL+C, CTRL+Z and quit singles ]= --------#
+#trap '' SIGINT SIGQUIT SIGTSTP
+
+#-------- =[ Garbage ]= --------#
 #read_options(){
 #    local choice
 #    read -p "Enter choice [ 1 - 5] " choice
 #    case $choice in
-#        1) DeleteGenerations ;;
-#        2) RunGC ;;
+#        1) Generations ;;
+#        2) GC ;;
 #        3) Fix ;;
 #        5) exit 0;;
 #        *) echo -e "${RED}Error...${STD}" && sleep 2
-    #    esac
-    #}
+#    esac
+#}
 
 #RED='\033[0;41;30m'
 #BLUE='\033[0;41;34m'
