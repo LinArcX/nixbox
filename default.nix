@@ -25,14 +25,3 @@ stdenv.mkDerivation rec {
     maintainers = [ maintainers.linarcx ];
   };
 }
-
-#echo "$file"
-#echo "$filename" | cut -f 1 -d '.'
-
-#cp -v $( find . -name '*.sh') $out/bin
-#
-#    for file in *; do
-#      if [ -f "$file" ]; then
-#        do command -input $file -output "''${file%.*}"
-#      fi
-#    done
