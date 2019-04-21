@@ -1,4 +1,4 @@
-# NixBox ![Language](https://img.shields.io/github/languages/top/LinArcX/nixbox.svg?style=flat-square) ![RepoSize](https://img.shields.io/github/repo-size/LinArcX/nixbox.svg?style=flat-square) ![Latest Tag](https://img.shields.io/github/tag/LinArcX/Gnulium.svg?colorB=green&style=flat-square)
+# NixBox ![Language](https://img.shields.io/github/languages/top/LinArcX/nixbox.svg?style=flat-square) ![RepoSize](https://img.shields.io/github/repo-size/LinArcX/nixbox.svg?style=flat-square) ![Latest Tag](https://img.shields.io/github/tag/LinArcX/nixbox.svg?colorB=green&style=flat-square)
 Nixos operations in box!
 
 ## Preview
@@ -13,9 +13,9 @@ A menu driven shell script to manage nixos operations.
 3. List/update/add channels.
 
 ##
-|About NixBox|Menu|search_derivation|
+|Menu|Search Derivation|Locate Packages|
 |:-----:|:-----:|:-----:|
-|![](./assets/menu.png)|![](./assets/search_derivation.png)|![](./assets/search_derivation.png)|
+|![](./assets/menu.png)|![](./assets/search_derivation.png)|![](./assets/locate_packages.png)|
 |Click image to enlarge|Click image to enlarge| Click image to enlarge|
 
 ## Installation
