@@ -8,14 +8,14 @@ Nixos operations in box!
 A menu driven shell script to manage nixos operations.
 
 ## Features
-1. Show all information that user needs in Main Page.
-2. Show Shell History in Graphical way in Scripts->Histogram.
-3. You Can Change application fonts and theme via: Gnulium->Settings.
+1. Show generations per profiles(user profile, system profile).
+2. List/delete/search derivations.
+3. List/update/add channels.
 
 ##
 |About NixBox|Menu|search_derivation|
 |:-----:|:-----:|:-----:|
-|![](./assets/menu.png)|![](./assets/search_derivation)|![](./assets/search_derivation)|
+|![](./assets/menu.png)|![](./assets/search_derivation.png)|![](./assets/search_derivation.png)|
 |Click image to enlarge|Click image to enlarge| Click image to enlarge|
 
 ## Installation
