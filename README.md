@@ -20,7 +20,7 @@ A menu driven shell script to manage nixos operations.
 
 ## Installation
 
-1. if you are on unstable channel:
+1. if you are in unstable channel:
 `nix-env -iA nixos.nixbox`
 2. or download __default.nix__ and build it with `nix-build`
 
