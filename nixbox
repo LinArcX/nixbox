@@ -349,6 +349,15 @@ RebuildFix(){
     sudo nixos-rebuild switch --repair
 }
 
+Optimise(){
+    read -p "${red}This may take some times. Are you sure to continue? ${end}" choice
+    case $choice in
+        'y'|'Y'|"Yes"|"yes") nix-store --optimise;;
+        'n'|'N'|"No"|"no") Fix ;;
+        *) echo -e "${RED}Error...${STD}" && sleep 2
+    esac
+}
+
 AdvanceFix(){
     sudo nix-store --verify --check-contents --repair
 }
@@ -362,12 +371,14 @@ Fix(){
     userChoice=$(select_opt\
         "0. Rebuild-Fix" \
         "1. Scan the entire Nix store and fix corrupted paths"\
-        "2. Back")
+        "2. Optimise" \
+        "3. Back")
 
     case "$userChoice" in
         0) RebuildFix; pressAnyKey; Fix ;;
         1) AdvanceFix; pressAnyKey; Fix ;;
-        2) show_menus ;;
+        2) Optimise; pressAnyKey; Fix ;;
+        3) show_menus ;;
         *) echo -e "${red}Error...${end}" && sleep 2
             Fix;;
     esac
