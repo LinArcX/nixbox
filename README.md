@@ -24,25 +24,9 @@ A menu driven shell script to manage nixos operations.
 `nix-env -iA nixos.nixbox`
 2. or download __default.nix__ and build it with `nix-build`
 
-## Contributing
-![Open PR](https://img.shields.io/github/issues-pr-raw/LinArcX/nixbox.svg?style=flat-square) ![Closed PR](https://img.shields.io/github/issues-pr-closed/LinArcX/nixbox.svg?style=flat-square)
-1. Fork it!
-2. Create your feature branch: `git checkout -b my-new-feature`
-3. Commit your changes: `git commit -am 'Add some feature'`
-4. Push to the branch: `git push origin my-new-feature`
-5. Submit a pull request :D
-
-
-## Bugs
-![Open Issues](https://img.shields.io/github/issues-raw/LinArcX/nixbox.svg?style=flat-square) ![Issues](https://img.shields.io/github/issues-closed-raw/LinArcX/nixbox.svg?style=flat-square)
-
-Bugs should be reported [here](https://github.com/LinArcX/nixbox/issues) on the Github issues page.
-
-## Credits
-LinArcX
-Github Repo:[https://github.com/LinArcX](https://github.com/LinArcX)
-
-E-Mail:linarcx@gmail.com
+## Donate
+- Monero: `48VdRG9BNePEcrUr6Vx6sJeVz6EefGq5e2F5S9YV2eJtd5uAwjJ7Afn6YeVTWsw6XGS6mXueLywEea3fBPztUbre2Lhia7e`
+<img src="assets/monero.png" align="center" />
 
 ## License
 ![License](https://img.shields.io/github/license/LinArcX/nixbox.svg?style=flat-square)
